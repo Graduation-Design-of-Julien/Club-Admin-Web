@@ -20,7 +20,7 @@ type RoleType = {
     deleted: 0 | 1
 }
 
-const role = [
+const role: Array<RoleType> = [
     {
         userRole: 0,
         roleName: "管理员",
