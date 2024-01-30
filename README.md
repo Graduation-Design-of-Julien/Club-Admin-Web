@@ -18,7 +18,7 @@
 ## 下载项目并启动调试
 ``` sh
 # 从GitHub中克隆项目
-git clone https://github.com/Graduation-Design-of-Julien/Club-Admin-Web
+git clone https://github.com/Graduation-Design-of-Julien/Club-Admin-Web.git
 
 # 进入项目并下载依赖
 npm install -g pnpm
