@@ -4,8 +4,8 @@
 |:---:|:---:|:---:|:---:|:---:|:---:|:---:|:---:|:---:|:---:|
 | 1 | userRole | 职位编号 | char | 2 | o | x | o | o |  |
 | 2 | roleName | 职位名称 | varchar | 30 | x | x | x | o |  |
-| 3 | createTime | 添加时间 | Datetime |  | x | x | x | o | 初次添加部门时的时间 |
-| 4 | changeTime | 修改时间 | Datetime |  | x | x | x | o | 修改状态时的时间 |
+| 3 | createTime | 添加时间 | Datetime |  | x | x | x | o | 初次添加时的时间 |
+| 4 | changeTime | 修改时间 | Datetime |  | x | x | x | o | 最后修改时的时间 |
 | 5 | deleted | 逻辑删除 | tinyint |  | x | x | x | o | 0表示仍在使用，1表示已删除 | 
 | 6 |  |  |  |  |  |  |  |  |
 
