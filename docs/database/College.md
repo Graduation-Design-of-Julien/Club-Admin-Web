@@ -19,7 +19,7 @@ type CollegeType = {
     deleted: 0 | 1
 }
 
-const mojarList: Array<MojarType> = [
+const collegeList: Array<MojarType> = [
     {
         mojarCode: 1,
         mojarName: "信息学院",

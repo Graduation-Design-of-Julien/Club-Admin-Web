@@ -19,7 +19,7 @@ type DepartmentType = {
     deleted: 0 | 1
 }
 
-const role: Array<DepartmentType> = [
+const departmenList: Array<DepartmentType> = [
     {
         departmentCode: 1,
         departmentName: "运营中心",
