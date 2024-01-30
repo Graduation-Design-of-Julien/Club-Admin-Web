@@ -30,7 +30,7 @@ pnpm run dev
 
 ```
 
-## Licence
+## License
 - Apache
 
 ## 免责声明
