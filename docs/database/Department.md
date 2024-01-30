@@ -1,16 +1,16 @@
-## 部门表
+## 部门表 ( department )
 
-| 序号| 字段名 | 说明 | 数据类型 | 长度 | 是否主键| 是否外键 | 是否唯一 | 备注 |
-|:---:|:---:|:---:|:---:|:---:|:---:|:---:|:---:|:---:|
-| 1 | departmentCode | 部门编号 | char | 2 | o | x | o |  |
-| 2 | departmentName | 部门名称 | varchar | 60 | x | x | x |  |
-| 3 | createTime | 添加时间 | Datetime |  | x | x | x | 初次添加部门时的时间 |
-| 4 | changeTime | 修改时间 | Datetime |  | x | x | x | 修改状态时的时间 |
-| 5 | deleted | 逻辑删除 | tinyint |  | x | x | x | 0表示仍在使用，1表示已删除 |
+| 序号| 字段名 | 说明 | 数据类型 | 长度 | 是否主键| 是否外键 | 是否唯一 | 是否非空 | 备注 |
+|:---:|:---:|:---:|:---:|:---:|:---:|:---:|:---:|:---:|:---:|
+| 1 | departmentCode | 部门编号 | char | 2 | o | x | o | o |  |
+| 2 | departmentName | 部门名称 | varchar | 60 | x | x | x | o |  |
+| 3 | createTime | 添加时间 | Datetime |  | x | x | x | o | 初次添加部门时的时间 |
+| 4 | changeTime | 修改时间 | Datetime |  | x | x | x | o | 修改状态时的时间 |
+| 5 | deleted | 逻辑删除 | tinyint |  | x | x | x | o | 0表示仍在使用，1表示已删除 |
 | 6 |  |  |  |  |  |  |  |  |
 
-## 部门信息
-``` TypeScript
+### 部门信息示例
+```TypeScript
 type DepartmentType = {
     departmentCode: string,
     departmentName: string,
