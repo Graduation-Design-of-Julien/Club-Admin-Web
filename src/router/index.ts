@@ -1,15 +1,19 @@
 import { createRouter, createWebHashHistory, RouteRecordRaw } from "vue-router";
 
+import Login from "../pages/login.vue";
+import ResetPwd from "../pages/resetPwd.vue";
+
+
+
 const routes: Array<RouteRecordRaw> = [
-    { path: '/', component: import('../pages/login.vue') },
+    { path: "/login", component: Login },
+    { path: "/reset", component: ResetPwd },
     // { path: '/about', component: About },
 ];
 
 const router = createRouter({
-    // 4. 内部提供了 history 模式的实现。为了简单起见，我们在这里使用 hash 模式。
     history: createWebHashHistory(),
-    routes, // `routes: routes` 的缩写
+    routes,
 });
 
-export default router
-
+export default router;
