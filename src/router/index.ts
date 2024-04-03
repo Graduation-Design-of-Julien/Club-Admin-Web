@@ -1,12 +1,11 @@
 import { createRouter, createWebHashHistory, RouteRecordRaw } from "vue-router";
 
-import Login from "../pages/login.vue";
-import ResetPwd from "../pages/resetPwd.vue";
-
+import ResetPwd from "../pages/ResetPwd.vue";
+import LoginPage from "../pages/LoginPage.vue";
 
 
 const routes: Array<RouteRecordRaw> = [
-    { path: "/login", component: Login },
+    { path: "/login", component: LoginPage },
     { path: "/reset", component: ResetPwd },
     // { path: '/about', component: About },
 ];
