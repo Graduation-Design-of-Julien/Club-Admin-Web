@@ -1,112 +1,116 @@
 <template>
-    <el-card>
-        <h2>重置您的密码</h2>
-        <el-steps
-            style="width: 600px"
-            align-center
-            :active="active"
-            finish-status="success"
-        >
-            <el-step title="Step 1" description="确定信息" />
-            <el-step title="Step 2" description="认证身份" />
-            <el-step title="Step 3" description="设置密码" />
-        </el-steps>
+    <div class="pages">
+        <el-card>
+            <h2>重置您的密码</h2>
+            <el-steps
+                style="width: 600px"
+                align-center
+                :active="active"
+                finish-status="success"
+            >
+                <el-step title="Step 1" description="确定信息" />
+                <el-step title="Step 2" description="认证身份" />
+                <el-step title="Step 3" description="设置密码" />
+            </el-steps>
 
-        <div v-if="show(0)">
-            <br />
-            <el-form
-                ref="step1FormRef"
-                style="max-width: 600px"
-                :model="resetForm"
-                :rules="FormRule"
-                label-width="80px"
-                label-position="left"
-                status-icon
-            >
-                <el-form-item label="账号" prop="uid">
-                    <el-input v-model="resetForm.uid">
-                        <template #prepend> UCS- </template>
-                    </el-input>
-                </el-form-item>
-                <el-form-item label="手机号" prop="phone">
-                    <el-input v-model="resetForm.phone" />
-                </el-form-item>
-            </el-form>
-            <el-button type="primary" @click="checkUserInfo(step1FormRef)"
-                >下一步</el-button
-            >
-        </div>
-        <div v-if="show(1)">
-            <el-form
-                ref="step2FormRef"
-                style="max-width: 600px"
-                :model="resetForm"
-                :rules="FormRule"
-                label-width="80px"
-                label-position="left"
-                status-icon
-            >
-                <el-form-item label="验证码" prop="verification">
-                    <el-input
-                        v-model="resetForm.verification"
-                        style="width: 60%; padding: 5px"
-                    />
-                    <el-button
-                        :disabled="btnDisabled"
-                        :type="btnType"
-                        @click="sendVC"
-                        style="width: 40%; padding: 5px"
-                        >{{ btnText }}</el-button
-                    >
-                </el-form-item>
-            </el-form>
-            <el-button type="primary" @click="checkVerification(step2FormRef)"
-                >下一步</el-button
-            >
-        </div>
-        <div v-if="show(2)">
-            <el-form
-                ref="step3FormRef"
-                style="max-width: 600px"
-                :model="resetForm"
-                :rules="FormRule"
-                label-width="80px"
-                label-position="left"
-                status-icon
-            >
-                <el-form-item label="新密码" prop="pwd">
-                    <el-input
-                        v-model="resetForm.pwd"
-                        type="password"
-                        show-password
-                    />
-                </el-form-item>
-                <el-form-item label="确认密码" prop="comfirm">
-                    <el-input
-                        v-model="resetForm.comfirm"
-                        type="password"
-                        show-password
-                    />
-                </el-form-item>
-            </el-form>
-            <el-button type="primary" @click="finishReset(step3FormRef)"
-                >下一步</el-button
-            >
-        </div>
-        <div v-if="show(3)">
-            <el-result
-                :icon="resetResult.icon"
-                :title="resetResult.title"
-                :sub-title="resetResult.subTitle"
-            >
-                <template #extra>
-                    <el-button type="primary" @click="router.push('/login')"
-                        >返回登录</el-button
-                    >
-                </template>
-            </el-result>
-        </div>
-    </el-card>
+            <div v-if="show(0)">
+                <br />
+                <el-form
+                    ref="step1FormRef"
+                    style="max-width: 600px"
+                    :model="resetForm"
+                    :rules="FormRule"
+                    label-width="80px"
+                    label-position="left"
+                    status-icon
+                >
+                    <el-form-item label="账号" prop="uid">
+                        <el-input v-model="resetForm.uid">
+                            <template #prepend> UCS- </template>
+                        </el-input>
+                    </el-form-item>
+                    <el-form-item label="手机号" prop="phone">
+                        <el-input v-model="resetForm.phone" />
+                    </el-form-item>
+                </el-form>
+                <el-button type="primary" @click="checkUserInfo(step1FormRef)"
+                    >下一步</el-button
+                >
+            </div>
+            <div v-if="show(1)">
+                <el-form
+                    ref="step2FormRef"
+                    style="max-width: 600px"
+                    :model="resetForm"
+                    :rules="FormRule"
+                    label-width="80px"
+                    label-position="left"
+                    status-icon
+                >
+                    <el-form-item label="验证码" prop="verification">
+                        <el-input
+                            v-model="resetForm.verification"
+                            style="width: 60%; padding: 5px"
+                        />
+                        <el-button
+                            :disabled="btnDisabled"
+                            :type="btnType"
+                            @click="sendVC"
+                            style="width: 40%; padding: 5px"
+                            >{{ btnText }}</el-button
+                        >
+                    </el-form-item>
+                </el-form>
+                <el-button
+                    type="primary"
+                    @click="checkVerification(step2FormRef)"
+                    >下一步</el-button
+                >
+            </div>
+            <div v-if="show(2)">
+                <el-form
+                    ref="step3FormRef"
+                    style="max-width: 600px"
+                    :model="resetForm"
+                    :rules="FormRule"
+                    label-width="80px"
+                    label-position="left"
+                    status-icon
+                >
+                    <el-form-item label="新密码" prop="pwd">
+                        <el-input
+                            v-model="resetForm.pwd"
+                            type="password"
+                            show-password
+                        />
+                    </el-form-item>
+                    <el-form-item label="确认密码" prop="comfirm">
+                        <el-input
+                            v-model="resetForm.comfirm"
+                            type="password"
+                            show-password
+                        />
+                    </el-form-item>
+                </el-form>
+                <el-button type="primary" @click="finishReset(step3FormRef)"
+                    >下一步</el-button
+                >
+            </div>
+            <div v-if="show(3)">
+                <el-result
+                    :icon="resetResult.icon"
+                    :title="resetResult.title"
+                    :sub-title="resetResult.subTitle"
+                >
+                    <template #extra>
+                        <el-button type="primary" @click="router.push('/login')"
+                            >返回登录</el-button
+                        >
+                    </template>
+                </el-result>
+            </div>
+        </el-card>
+    </div>
 </template>
 
 <script lang="ts" setup>
@@ -339,8 +343,8 @@ const resetResultList = {
     },
 };
 const resetResult = ref({
-    ...resetResultList.success
-})
+    ...resetResultList.success,
+});
 
 // 修改密码
 const finishReset = async (formEl: FormInstance | undefined) => {
@@ -355,3 +359,13 @@ const finishReset = async (formEl: FormInstance | undefined) => {
     });
 };
 </script>
+
+<style scoped>
+.pages {
+    width: 100%;
+    height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+</style>

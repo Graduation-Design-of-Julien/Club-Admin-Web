@@ -1,76 +1,82 @@
 <template>
-    <el-card style="max-width: 480px">
-        <el-image
-            style="width: 300px; height: 300px"
-            src="../assets/logo.png"
-            fit="contain"
-        />
-        <h2>登录到 {{ systemData.systemName }}</h2>
-        <el-tabs v-model="activeTab" class="demo-tabs" style="width: 300px">
-            <el-tab-pane label="使用账号登录" name="useUid">
-                <el-form
-                    ref="uidFormRef"
-                    style="max-width: 600px"
-                    :model="loginForm"
-                    :rules="rules"
-                    label-width="60px"
-                    label-position="left"
-                    status-icon
-                >
-                    <el-form-item label="账号" prop="uid">
-                        <el-input v-model="loginForm.uid">
-                            <template #prepend> UCS- </template>
-                        </el-input>
-                    </el-form-item>
-                    <el-form-item label="密码" prop="pwd">
-                        <el-input
-                            v-model="loginForm.pwd"
-                            type="password"
-                            show-password
-                        />
-                    </el-form-item>
-                </el-form>
-                <div style="display: flex; justify-content: end">
-                    <el-button type="info" @click="resetPwd"
-                        >忘记密码</el-button
+    <div class="pages">
+        <el-card style="max-width: 480px">
+            <el-image
+                style="width: 300px; height: 300px"
+                src="../assets/logo.png"
+                fit="contain"
+            />
+            <h2>登录到 {{ systemData.systemName }}</h2>
+            <el-tabs v-model="activeTab" class="demo-tabs" style="width: 300px">
+                <el-tab-pane label="使用账号登录" name="useUid">
+                    <el-form
+                        ref="uidFormRef"
+                        style="max-width: 600px"
+                        :model="loginForm"
+                        :rules="rules"
+                        label-width="60px"
+                        label-position="left"
+                        status-icon
                     >
-                    <el-button type="primary" @click="submitForm(uidFormRef)"
-                        >登录</el-button
+                        <el-form-item label="账号" prop="uid">
+                            <el-input v-model="loginForm.uid">
+                                <template #prepend> UCS- </template>
+                            </el-input>
+                        </el-form-item>
+                        <el-form-item label="密码" prop="pwd">
+                            <el-input
+                                v-model="loginForm.pwd"
+                                type="password"
+                                show-password
+                            />
+                        </el-form-item>
+                    </el-form>
+                    <div style="display: flex; justify-content: end">
+                        <el-button type="info" @click="resetPwd"
+                            >忘记密码</el-button
+                        >
+                        <el-button
+                            type="primary"
+                            @click="submitForm(uidFormRef)"
+                            >登录</el-button
+                        >
+                    </div>
+                </el-tab-pane>
+                <el-tab-pane label="使用手机号登录" name="usePhone">
+                    <el-form
+                        ref="phoneFormRef"
+                        style="max-width: 600px"
+                        :model="loginForm"
+                        :rules="rules"
+                        label-width="60px"
+                        label-position="left"
+                        status-icon
                     >
-                </div>
-            </el-tab-pane>
-            <el-tab-pane label="使用手机号登录" name="usePhone">
-                <el-form
-                    ref="phoneFormRef"
-                    style="max-width: 600px"
-                    :model="loginForm"
-                    :rules="rules"
-                    label-width="60px"
-                    label-position="left"
-                    status-icon
-                >
-                    <el-form-item label="手机号" prop="phone">
-                        <el-input v-model="loginForm.phone" />
-                    </el-form-item>
-                    <el-form-item label="密码" prop="pwd">
-                        <el-input
-                            v-model="loginForm.pwd"
-                            type="password"
-                            show-password
-                        />
-                    </el-form-item>
-                </el-form>
-                <div style="display: flex; justify-content: end">
-                    <el-button type="info" @click="resetPwd"
-                        >忘记密码</el-button
-                    >
-                    <el-button type="primary" @click="submitForm(phoneFormRef)"
-                        >登录</el-button
-                    >
-                </div>
-            </el-tab-pane>
-        </el-tabs>
-    </el-card>
+                        <el-form-item label="手机号" prop="phone">
+                            <el-input v-model="loginForm.phone" />
+                        </el-form-item>
+                        <el-form-item label="密码" prop="pwd">
+                            <el-input
+                                v-model="loginForm.pwd"
+                                type="password"
+                                show-password
+                            />
+                        </el-form-item>
+                    </el-form>
+                    <div style="display: flex; justify-content: end">
+                        <el-button type="info" @click="resetPwd"
+                            >忘记密码</el-button
+                        >
+                        <el-button
+                            type="primary"
+                            @click="submitForm(phoneFormRef)"
+                            >登录</el-button
+                        >
+                    </div>
+                </el-tab-pane>
+            </el-tabs>
+        </el-card>
+    </div>
 </template>
 
 <script lang="ts" setup>
@@ -168,3 +174,13 @@ const resetPwd = () => {
     router.push("/reset");
 };
 </script>
+
+<style scoped>
+.pages{
+    width: 100%;
+    height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+</style>
