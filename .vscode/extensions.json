@@ -1,10 +1,9 @@
 {
     "recommendations": [
-        "Vue.volar",
         "dbaeumer.vscode-eslint",
         "esbenp.prettier-vscode",
         "stylelint.vscode-stylelint",
-        "Vue.vscode-typescript-vue-plugin"
+        "vue.volar"
     ],
     // enable the Take Over Mode
     "unwantedRecommendations": ["vscode.typescript-language-features"]
