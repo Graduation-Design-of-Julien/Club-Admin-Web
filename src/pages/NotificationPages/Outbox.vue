@@ -51,9 +51,9 @@ const tableData: Array<Notification> = [
         title: "测试标题1",
         content: "测试内容1",
         sender: "",
-        createTime: new Date(),
+        createTime: new Date().toTimeString(),
         status: "已发送",
-        changeTime: new Date(),
+        changeTime: new Date().toTimeString(),
         recipients: [],
     },
 ];
@@ -64,9 +64,9 @@ const editForm = ref<Notification>({
     title: "测试标题1",
     content: "测试内容1",
     sender: "",
-    createTime: new Date(),
+    createTime: new Date().toTimeString(),
     status: "已发送",
-    changeTime: new Date(),
+    changeTime: new Date().toTimeString(),
     recipients: [],
 });
 const centerDialogVisible = ref(false);
