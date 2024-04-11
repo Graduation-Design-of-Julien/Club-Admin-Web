@@ -1,4 +1,5 @@
 <template>
+    <h2>收件箱</h2>
     <el-table :data="tableData" stripe style="width: 100%">
         <el-table-column prop="title" label="标题" width="180" />
         <el-table-column label="状态" width="180">
