@@ -18,19 +18,17 @@
                 <el-form
                     ref="step1FormRef"
                     style="max-width: 600px"
-                    :model="resetForm"
-                    :rules="FormRule"
+                    :model="step1Form"
+                    :rules="step1Rule"
                     label-width="80px"
                     label-position="left"
                     status-icon
                 >
                     <el-form-item label="账号" prop="uid">
-                        <el-input v-model="resetForm.uid">
-                            <template #prepend> UCS- </template>
-                        </el-input>
+                        <el-input v-model="step1Form.uid" />
                     </el-form-item>
-                    <el-form-item label="手机号" prop="phone">
-                        <el-input v-model="resetForm.phone" />
+                    <el-form-item label="手机号" prop="phoneNum">
+                        <el-input v-model="step1Form.phoneNum" />
                     </el-form-item>
                 </el-form>
                 <el-button type="primary" @click="checkUserInfo(step1FormRef)"
@@ -41,15 +39,15 @@
                 <el-form
                     ref="step2FormRef"
                     style="max-width: 600px"
-                    :model="resetForm"
-                    :rules="FormRule"
+                    :model="step2Form"
+                    :rules="step2Rule"
                     label-width="80px"
                     label-position="left"
                     status-icon
                 >
-                    <el-form-item label="验证码" prop="verification">
+                    <el-form-item label="验证码" prop="verifyCode">
                         <el-input
-                            v-model="resetForm.verification"
+                            v-model="step2Form.verifyCode"
                             style="width: 60%; padding: 5px"
                         />
                         <el-button
@@ -72,7 +70,7 @@
                     ref="step3FormRef"
                     style="max-width: 600px"
                     :model="resetForm"
-                    :rules="FormRule"
+                    :rules="step3Rule"
                     label-width="80px"
                     label-position="left"
                     status-icon
@@ -84,16 +82,16 @@
                             show-password
                         />
                     </el-form-item>
-                    <el-form-item label="确认密码" prop="comfirm">
+                    <el-form-item label="确认密码" prop="confirm">
                         <el-input
-                            v-model="resetForm.comfirm"
+                            v-model="resetForm.confirm"
                             type="password"
                             show-password
                         />
                     </el-form-item>
                 </el-form>
                 <el-button type="primary" @click="finishReset(step3FormRef)"
-                    >下一步</el-button
+                    >完成修改</el-button
                 >
             </div>
             <div v-if="show(3)">
@@ -116,9 +114,10 @@
 <script lang="ts" setup>
 import { FormInstance, FormRules } from "element-plus";
 import { reactive, ref } from "vue";
-import { ResetForm } from "../types/auth";
-import { SEND_SMS_DELAY } from "../config/baseData";
+import { SEND_SMS_DELAY } from "../config/config";
 import router from "../router";
+import { ResetPwd, VerifyCode, VerifyUser } from "../types/login";
+import { createVerifyCode, resetPwd, verifyCode, verifyUser } from "../api";
 
 // 步骤
 const active = ref(0);
@@ -176,8 +175,14 @@ const startStep2 = () => {
 };
 // 发送验证码
 const sendVC = () => {
-    startStep2();
-    // TODO: Send SMS
+    createVerifyCode({ phoneNum: step1Form.phoneNum }).then((res) => {
+        if (res.success) {
+            ElMessage({
+                type: "success",
+                message: "发送验证码成功。",
+            });
+        }
+    });
 };
 
 // 步骤一表单
@@ -187,13 +192,21 @@ const step2FormRef = ref<FormInstance>();
 // 步骤三表单
 const step3FormRef = ref<FormInstance>();
 
-// 重设密码表单
-const resetForm = reactive<ResetForm>({
+// 验证身份表单
+const step1Form = reactive<VerifyUser>({
     uid: "",
-    phone: "",
-    verification: "",
+    phoneNum: "",
+});
+
+const step2Form = reactive<VerifyCode>({
+    phoneNum: "",
+    verifyCode: "",
+});
+// 重置密码表单
+const resetForm = reactive<ResetPwd>({
+    uid: "",
     pwd: "",
-    comfirm: "",
+    confirm: "",
 });
 
 // 账号验证
@@ -202,7 +215,7 @@ const checkUid = (rule: any, value: any, callback: any) => {
     if (value === "") {
         callback(new Error("账号不能为空。"));
     } else {
-        const pattern = /^[0-9]*$/;
+        const pattern = /^[A-Za-z]*-[0-9]*$/;
         if (pattern.test(value)) {
             callback();
         } else {
@@ -255,8 +268,8 @@ const checkPwd = (rule: any, value: any, callback: any) => {
                 )
             );
         } else {
-            if (value !== resetForm.comfirm) {
-                if (resetForm.comfirm === "") {
+            if (value !== resetForm.confirm) {
+                if (resetForm.confirm === "") {
                     callback(new Error("请确认您的密码。"));
                 } else {
                     callback(new Error("两次输入的密码不一致。"));
@@ -281,32 +294,63 @@ const checkComfirm = (rule: any, value: any, callback: any) => {
 };
 
 // 表单验证
-const FormRule = reactive<FormRules<ResetForm>>({
+const step1Rule = reactive<FormRules<VerifyUser>>({
     uid: [
+        {
+            required: true,
+            message: "账号不能为空。",
+            trigger: "blur",
+        },
         {
             validator: checkUid,
             trigger: "blur",
         },
     ],
-    phone: [
+    phoneNum: [
+        {
+            required: true,
+            message: "手机号不能为空。",
+            trigger: "blur",
+        },
         {
             validator: checkPhone,
             trigger: "blur",
         },
     ],
-    verification: [
+});
+
+const step2Rule = reactive<FormRules<VerifyCode>>({
+    verifyCode: [
+        {
+            required: true,
+            message: "验证码不能为空。",
+            trigger: "blur",
+        },
         {
             validator: checkVerificationRule,
             trigger: "blur",
         },
     ],
+});
+
+const step3Rule = reactive<FormRules<ResetPwd>>({
     pwd: [
+        {
+            required: true,
+            message: "密码不能为空。",
+            trigger: "blur",
+        },
         {
             validator: checkPwd,
             trigger: "blur",
         },
     ],
-    comfirm: [
+    confirm: [
+        {
+            required: true,
+            message: "请再次输入密码。",
+            trigger: "blur",
+        },
         {
             validator: checkComfirm,
             trigger: "blur",
@@ -318,9 +362,13 @@ const checkUserInfo = async (formEl: FormInstance | undefined) => {
     if (!formEl) return;
     await formEl.validate((valid, fields) => {
         if (valid) {
-            // TODO: 向后端获取是否有该信息
-            next();
-            sendVC();
+            verifyUser(step1Form).then((res) => {
+                if (res.success) {
+                    sendVC();
+                    startStep2();
+                    next();
+                }
+            });
         } else {
             console.log("error submit!", fields);
         }
@@ -331,8 +379,21 @@ const checkVerification = async (formEl: FormInstance | undefined) => {
     if (!formEl) return;
     await formEl.validate((valid, fields) => {
         if (valid) {
-            // TODO: 与后端校验验证码
-            next();
+            step2Form.phoneNum = step1Form.phoneNum;
+            verifyCode(step2Form).then((res) => {
+                if (res.success) {
+                    ElMessage({
+                        type: "success",
+                        message: "验证成功。",
+                    });
+                    next();
+                } else {
+                    ElMessage({
+                        type: "error",
+                        message: res.message,
+                    });
+                }
+            });
         } else {
             console.log("error submit!", fields);
         }
@@ -369,8 +430,13 @@ const finishReset = async (formEl: FormInstance | undefined) => {
     if (!formEl) return;
     await formEl.validate((valid, fields) => {
         if (valid) {
-            // TODO: 完成修改
-            next();
+            resetForm.uid = step1Form.uid;
+            resetPwd(resetForm).then((res) => {
+                if (res.success) {
+                    resetResult.value = resetResultList.success;
+                    next();
+                }
+            });
         } else {
             console.log("error submit!", fields);
         }

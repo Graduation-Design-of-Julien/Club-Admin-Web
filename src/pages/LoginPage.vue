@@ -103,7 +103,22 @@ const phoneForm = reactive<LoginByPhone>({
     pwd: "",
 });
 
-// 账号或手机号非空验证
+// 账号验证
+const checkUid = (rule: any, value: any, callback: any) => {
+    console.log(rule);
+    if (value === "") {
+        callback(new Error("账号不能为空。"));
+    } else {
+        const pattern = /^[A-Za-z]*-[0-9]*$/;
+        if (pattern.test(value)) {
+            callback();
+        } else {
+            callback(new Error("账号格式错误。"));
+        }
+    }
+};
+
+// 手机号验证
 const checkPhoneNum = (rule: any, value: any, callback: any) => {
     console.log(rule);
     const pattern =
@@ -121,6 +136,10 @@ const uidRules = reactive<FormRules<LoginByUid>>({
         {
             required: true,
             message: "帐号不能为空。",
+            trigger: "blur",
+        },
+        {
+            validator: checkUid,
             trigger: "blur",
         },
     ],
