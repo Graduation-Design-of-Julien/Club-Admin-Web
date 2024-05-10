@@ -1,31 +1,29 @@
 <template>
     <div class="pages">
-        <el-card style="max-width: 480px">
+        <el-card style="width: 480px">
             <el-image
                 style="width: 300px; height: 300px"
-                :src="systemData.systemLogoUrl"
+                :src="SYS_LOGO_URL"
                 fit="contain"
             />
-            <h2>登录到 {{ systemData.systemName }}</h2>
-            <el-tabs v-model="activeTab" class="demo-tabs" style="width: 300px">
+            <h2>登录到 {{ SYS_NAME }}</h2>
+            <el-tabs v-model="activeTab" class="demo-tabs" :stretch="true">
                 <el-tab-pane label="使用账号登录" name="useUid">
                     <el-form
                         ref="uidFormRef"
                         style="max-width: 600px"
-                        :model="loginForm"
-                        :rules="rules"
-                        label-width="60px"
+                        :model="uidForm"
+                        :rules="uidRules"
+                        label-width="100px"
                         label-position="left"
                         status-icon
                     >
                         <el-form-item label="账号" prop="uid">
-                            <el-input v-model="loginForm.uid">
-                                <template #prepend> UCS- </template>
-                            </el-input>
+                            <el-input v-model="uidForm.uid" />
                         </el-form-item>
                         <el-form-item label="密码" prop="pwd">
                             <el-input
-                                v-model="loginForm.pwd"
+                                v-model="uidForm.pwd"
                                 type="password"
                                 show-password
                             />
@@ -46,18 +44,18 @@
                     <el-form
                         ref="phoneFormRef"
                         style="max-width: 600px"
-                        :model="loginForm"
-                        :rules="rules"
-                        label-width="60px"
+                        :model="phoneForm"
+                        :rules="phoneRules"
+                        label-width="100px"
                         label-position="left"
                         status-icon
                     >
-                        <el-form-item label="手机号" prop="phone">
-                            <el-input v-model="loginForm.phone" />
+                        <el-form-item label="手机号" prop="phoneNum">
+                            <el-input v-model="phoneForm.phoneNum" />
                         </el-form-item>
                         <el-form-item label="密码" prop="pwd">
                             <el-input
-                                v-model="loginForm.pwd"
+                                v-model="phoneForm.pwd"
                                 type="password"
                                 show-password
                             />
@@ -82,21 +80,11 @@
 <script lang="ts" setup>
 import { reactive, ref } from "vue";
 import type { FormInstance, FormRules } from "element-plus";
-import { LoginForm } from "../types/auth";
 import router from "../router";
-
-// 基本数据
-const systemData = ref<{
-    systemName: string;
-    systemLogoUrl: string;
-}>({
-    systemName: "京涛海纳工作室",
-    systemLogoUrl: "https://ucs.zjlblog.site/assets/logo-69c25431.png",
-});
-// 加载基本数据
-// TODO: 完成网络请求部分
-const loadSysData = () => {};
-loadSysData();
+import { LoginByPhone, LoginByUid } from "../types/login";
+import { loginByPhone, loginByUid } from "../api";
+import { useLocalStorage } from "../utils/useLocalStorage";
+import { SYS_LOGO_URL, SYS_NAME } from "../config/config";
 
 // 标签页初始值
 const activeTab = ref("useUid");
@@ -106,71 +94,104 @@ const uidFormRef = ref<FormInstance>();
 // 手机号登录表单
 const phoneFormRef = ref<FormInstance>();
 // 表单内容
-const loginForm = reactive<LoginForm>({
+const uidForm = reactive<LoginByUid>({
     uid: "",
-    phone: "",
+    pwd: "",
+});
+const phoneForm = reactive<LoginByPhone>({
+    phoneNum: "",
     pwd: "",
 });
 
 // 账号或手机号非空验证
-const checkLoginWay = (rule: any, value: any, callback: any) => {
+const checkPhoneNum = (rule: any, value: any, callback: any) => {
     console.log(rule);
-    if (activeTab.value == "useUid") {
-        if (value === "") {
-            callback(new Error("账号不能为空。"));
-        } else {
-            const pattern = /^[0-9]*$/;
-            if (pattern.test(value)) {
-                callback();
-            } else {
-                callback(new Error("账号格式错误。"));
-            }
-        }
-    } else if (activeTab.value == "usePhone") {
-        if (value === "") {
-            callback(new Error("手机号不能为空。"));
-        } else {
-            const pattern =
-                /^(13[0-9]|14[01456879]|15[0-35-9]|16[2567]|17[0-8]|18[0-9]|19[0-35-9])\d{8}$/;
-            if (pattern.test(value)) {
-                callback();
-            } else {
-                callback(new Error("手机号格式错误。"));
-            }
-        }
+    const pattern =
+        /^(13[0-9]|14[01456879]|15[0-35-9]|16[2567]|17[0-8]|18[0-9]|19[0-35-9])\d{8}$/;
+    if (pattern.test(value)) {
+        callback();
+    } else {
+        callback(new Error("手机号格式错误。"));
     }
 };
 
 // 登录表单验证
-const rules = reactive<FormRules<LoginForm>>({
+const uidRules = reactive<FormRules<LoginByUid>>({
     uid: [
         {
-            validator: checkLoginWay,
+            required: true,
+            message: "帐号不能为空。",
             trigger: "blur",
         },
     ],
-    phone: [
+    pwd: [
         {
-            validator: checkLoginWay,
+            required: true,
+            message: "密码不能为空。",
             trigger: "blur",
         },
     ],
-    pwd:[
+});
+const phoneRules = reactive<FormRules<LoginByPhone>>({
+    phoneNum: [
+        {
+            required: true,
+            message: "帐号不能为空。",
+            trigger: "blur",
+        },
+        {
+            validator: checkPhoneNum,
+            trigger: "blur",
+        },
+    ],
+    pwd: [
         {
             required: true,
             message: "请输入密码。",
-            trigger: "blur"
-        }
-    ]
+            trigger: "blur",
+        },
+    ],
 });
 
+const successLogin = (token: string) => {
+    const localStorageHelper = useLocalStorage();
+    localStorageHelper.setLocalStorage("token", token);
+};
+
 // 提交
-// TODO: 实际请求
 const submitForm = async (formEl: FormInstance | undefined) => {
     if (!formEl) return;
     await formEl.validate((valid, fields) => {
         if (valid) {
-            console.log(loginForm);
+            if (activeTab.value === "useUid") {
+                loginByUid(uidForm)
+                    .then((res) => {
+                        if (res.success) {
+                            successLogin(res.data!.accessToken);
+                            router.push("/layout/home");
+                        }
+                    })
+                    .catch(() => {
+                        ElMessage({
+                            type: "error",
+                            message: "登录失败，请稍后再试。",
+                        });
+                    });
+            } else if (activeTab.value === "usePhone") {
+                loginByPhone(phoneForm)
+                    .then((res) => {
+                        if (res.success) {
+                            successLogin(res.data!.accessToken);
+                            router.push("/layout/home");
+                        }
+                    })
+                    .catch(() => {
+                        ElMessage({
+                            type: "error",
+                            message: "登录失败，请稍后再试。",
+                        });
+                    });
+            }
         } else {
             console.log("error submit!", fields);
         }
@@ -183,7 +204,7 @@ const resetPwd = () => {
 </script>
 
 <style scoped>
-.pages{
+.pages {
     width: 100%;
     height: 100%;
     display: flex;
