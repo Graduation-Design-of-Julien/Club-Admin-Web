@@ -4,7 +4,7 @@
         <el-table-column prop="title" label="标题" width="180" />
         <el-table-column label="状态" width="180">
             <template #default="scope">
-                <el-tag>{{ scope.row.status }}</el-tag>
+                <el-tag :type="scope.row.status=='已读' ? 'primary' : 'warning'">{{ scope.row.status }}</el-tag>
             </template>
         </el-table-column>
         <el-table-column prop="changeTime" label="修改时间" width="180" />
@@ -57,9 +57,25 @@ const tableData: Array<Outbox> = [
         notificationID: "",
         title: "测试标题1",
         content: "测试内容1",
-        sender: "",
+        sender: "已读",
+        status: "已读",
+        changeTime: "2024-04-10 23:32:59"
+    },
+    {
+        notificationID: "",
+        title: "测试标题2",
+        content: "测试内容2",
+        sender: "未读",
         status: "未读",
-        changeTime: new Date().toTimeString(),
+        changeTime: "2024-04-10 23:35:36",
+    },
+    {
+        notificationID: "",
+        title: "测试标题3",
+        content: "测试内容3",
+        sender: "",
+        status: "已读",
+        changeTime: "2024-04-10 23:41:13",
     },
 ];
 
