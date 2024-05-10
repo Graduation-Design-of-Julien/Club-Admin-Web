@@ -3,7 +3,7 @@
         <el-card style="max-width: 480px">
             <el-image
                 style="width: 300px; height: 300px"
-                src="../assets/logo.png"
+                :src="systemData.systemLogoUrl"
                 fit="contain"
             />
             <h2>登录到 {{ systemData.systemName }}</h2>
@@ -91,7 +91,7 @@ const systemData = ref<{
     systemLogoUrl: string;
 }>({
     systemName: "京涛海纳工作室",
-    systemLogoUrl: "",
+    systemLogoUrl: "https://ucs.zjlblog.site/assets/logo-69c25431.png",
 });
 // 加载基本数据
 // TODO: 完成网络请求部分
@@ -155,6 +155,13 @@ const rules = reactive<FormRules<LoginForm>>({
             trigger: "blur",
         },
     ],
+    pwd:[
+        {
+            required: true,
+            message: "请输入密码。",
+            trigger: "blur"
+        }
+    ]
 });
 
 // 提交
