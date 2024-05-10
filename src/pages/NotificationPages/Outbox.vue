@@ -1,5 +1,12 @@
 <template>
     <h2>发件箱</h2>
+    <div style="display: flex; flex-direction: row">
+        <el-input style="width: 200px" placeholder="请输入通知标题"></el-input>
+        <el-button type="primary">搜索</el-button>
+    </div>
+    <div style="display: flex; flex-direction: row; margin: 10px 0 10px 0">
+        <el-button type="primary">发布通知</el-button>
+    </div>
     <el-table :data="tableData" stripe style="width: 100%">
         <el-table-column prop="createTime" label="发件时间" width="180" />
         <el-table-column prop="changeTime" label="修改时间" width="180" />
@@ -51,9 +58,29 @@ const tableData: Array<Notification> = [
         title: "测试标题1",
         content: "测试内容1",
         sender: "",
-        createTime: new Date().toTimeString(),
+        createTime: "2024-04-10 23:32:59",
         status: "已发送",
-        changeTime: new Date().toTimeString(),
+        changeTime: "2024-04-10 23:32:59",
+        recipients: [],
+    },
+    {
+        notificationID: "",
+        title: "测试标题2",
+        content: "测试内容2",
+        sender: "",
+        createTime: "2024-04-10 23:35:36",
+        status: "已发送",
+        changeTime: "2024-04-10 23:35:36",
+        recipients: [],
+    },
+    {
+        notificationID: "",
+        title: "测试标题3",
+        content: "测试内容3",
+        sender: "",
+        createTime: "2024-04-10 23:41:13",
+        status: "已发送",
+        changeTime: "2024-04-10 23:41:13",
         recipients: [],
     },
 ];
@@ -84,7 +111,7 @@ const deleteNotification = (data: Notification) => {
     )
         .then(() => {
             // TODO: 完成删除
-            console.log(data)
+            console.log(data);
             ElMessage({
                 type: "success",
                 message: "删除成功",
@@ -98,12 +125,11 @@ const deleteNotification = (data: Notification) => {
         });
 };
 
-
 const handleEdit = (row: Notification) => {
     centerDialogVisible.value = true;
     editForm.value = row;
 };
 const handleDelete = (row: Notification) => {
-    deleteNotification(row)
+    deleteNotification(row);
 };
 </script>
