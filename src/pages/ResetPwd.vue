@@ -135,7 +135,16 @@ const show = (tab: number) => {
 
 // 步骤二对应操作
 const btnDisabled = ref(false);
-const btnType = ref("primary");
+const btnType = ref<
+    | ""
+    | "default"
+    | "primary"
+    | "success"
+    | "text"
+    | "warning"
+    | "info"
+    | "danger"
+>("primary");
 const btnText = ref("获取验证码");
 const countdownTime = ref(0);
 // 倒计时函数
@@ -330,7 +339,16 @@ const checkVerification = async (formEl: FormInstance | undefined) => {
     });
 };
 // 修改密码的状态
-const resetResultList = {
+interface ResetResult {
+    icon: "success" | "warning" | "info" | "error";
+    title: string;
+    subTitle: string;
+}
+interface ResetResultList {
+    success: ResetResult;
+    faild: ResetResult;
+}
+const resetResultList: ResetResultList = {
     success: {
         icon: "success",
         title: "密码已重置",
@@ -343,7 +361,7 @@ const resetResultList = {
     },
 };
 const resetResult = ref({
-    ...resetResultList.success,
+    ...resetResultList.faild,
 });
 
 // 修改密码
