@@ -25,14 +25,14 @@ export interface CreateRecruitment {
 
 export interface UpdateRecruitment {
     recruitmentID: string;
-    recruitmentName: string;
-    recruitmentTime: string;
-    recruitmentDepaList: string;
-    recruitmentDirecList: string;
-    recruitmentRoleList: string;
-    collegeCodeList: string;
-    mojarCodeList: string;
-    status: number;
+    recruitmentName?: string;
+    recruitmentTime?: string;
+    recruitmentDepaList?: string;
+    recruitmentDirecList?: string;
+    recruitmentRoleList?: string;
+    collegeCodeList?: string;
+    mojarCodeList?: string;
+    status?: number;
 }
 
 export interface DeleteRecruitment {

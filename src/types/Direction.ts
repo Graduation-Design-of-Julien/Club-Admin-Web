@@ -1,7 +1,7 @@
 export interface Direction {
     directionCode: string;
     directionName: string;
-    departmentCode: number;
+    departmentCode: string;
     createTime: string;
     changeTime: string;
     deleted: number;
