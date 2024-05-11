@@ -65,10 +65,10 @@ export interface CreateBorrow {
 
 export interface UpdateBorrow {
     borrowedID: string;
-    resourceID: string;
-    borrowTime: string;
-    returnTime: string;
-    realReturnTime: string;
+    resourceID?: string;
+    borrowTime?: string;
+    returnTime?: string;
+    realReturnTime?: string;
     isReturn: boolean;
 }
 
