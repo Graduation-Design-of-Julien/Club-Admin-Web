@@ -7,11 +7,12 @@ import Home from "../pages/Home.vue";
 import SendMessage from "../pages/NotificationPages/SendMessage.vue";
 import Outbox from "../pages/NotificationPages/Outbox.vue";
 import Inbox from "../pages/NotificationPages/Inbox.vue";
-import ResourcePage from "../pages/ResourcePages/index.vue";
+import ResourcePage from "../pages/ResourcePages/ResourcePage.vue";
 import MembersInfoPage from "../pages/MembersPages/MembersInfoPage.vue";
 import RecruitmentListPage from "../pages/RecruitmentPages/RecruitmentListPage.vue";
 import { useLocalStorage } from "../utils/useLocalStorage";
 import NxForm from "../pages/RecruitmentPages/NxForm.vue";
+import ResourceTypePage from "../pages/ResourcePages/ResourceTypePage.vue";
 
 const routes: Array<RouteRecordRaw> = [
     {
@@ -61,7 +62,18 @@ const routes: Array<RouteRecordRaw> = [
             {
                 path: "/layout/resource",
                 meta: { title: "物资管理" },
-                component: ResourcePage,
+                children: [
+                    {
+                        path: "/layout/resource/type",
+                        meta: { title: "物资类型" },
+                        component: ResourceTypePage,
+                    },
+                    {
+                        path: "/layout/resource/list",
+                        meta: { title: "物资管理" },
+                        component: ResourcePage,
+                    },
+                ],
             },
             {
                 path: "/layout/member",
