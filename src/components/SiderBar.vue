@@ -18,7 +18,9 @@
                         <el-icon><Message /></el-icon>
                         <span>通知管理</span>
                     </template>
-                    <el-menu-item index="/layout/notification/outbox"
+                    <el-menu-item
+                        v-if="userRole >= 2"
+                        index="/layout/notification/outbox"
                         >发件箱</el-menu-item
                     >
                     <el-menu-item index="/layout/notification/inbox"
@@ -26,7 +28,7 @@
                     >
                 </el-sub-menu>
 
-                <el-menu-item index="/layout/member/info">
+                <el-menu-item v-if="userRole >= 2" index="/layout/member/info">
                     <el-icon><Place /></el-icon>
                     <span>人员管理</span>
                 </el-menu-item>
@@ -36,10 +38,14 @@
                         <el-icon><Refrigerator /></el-icon>
                         <span>物资管理</span>
                     </template>
-                    <el-menu-item index="/layout/resource/type"
+                    <el-menu-item
+                        v-if="userRole >= 2"
+                        index="/layout/resource/type"
                         >物资类型</el-menu-item
                     >
-                    <el-menu-item index="/layout/resource/list"
+                    <el-menu-item
+                        v-if="userRole >= 2"
+                        index="/layout/resource/list"
                         >物资表</el-menu-item
                     >
                     <el-menu-item index="/layout/resource/myborrow"
@@ -47,7 +53,7 @@
                     >
                 </el-sub-menu>
 
-                <el-sub-menu index="5">
+                <el-sub-menu index="5" v-if="userRole >= 2">
                     <template #title>
                         <el-icon><CirclePlus /></el-icon>
                         <span>纳新管理</span>
@@ -55,13 +61,10 @@
                     <el-menu-item index="/layout/recruitment/list"
                         >纳新列表</el-menu-item
                     >
-                    <el-menu-item index="/layout/recruitment/application">报名列表</el-menu-item>
+                    <el-menu-item index="/layout/recruitment/application"
+                        >报名列表</el-menu-item
+                    >
                 </el-sub-menu>
-
-                <el-menu-item index="6">
-                    <el-icon><User /></el-icon>
-                    <span>个人中心</span>
-                </el-menu-item>
             </el-menu>
         </el-col>
     </el-row>
@@ -72,14 +75,28 @@ import {
     Refrigerator,
     CirclePlus,
     House,
-    User,
     Message,
     Place,
 } from "@element-plus/icons-vue";
+import { getUserInfo } from "../api";
+import { ref } from "vue";
 const handleOpen = (key: string, keyPath: string[]) => {
     console.log(key, keyPath);
 };
 const handleClose = (key: string, keyPath: string[]) => {
     console.log(key, keyPath);
 };
+
+const userRole = ref(0);
+
+const fetchMyInfo = () => {
+    getUserInfo().then((res) => {
+        if (res.success) {
+            console.log(res);
+            userRole.value = res.data!.userRole;
+            console.log(userRole.value);
+        }
+    });
+};
+fetchMyInfo();
 </script>
