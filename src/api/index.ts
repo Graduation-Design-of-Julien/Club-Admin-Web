@@ -223,6 +223,13 @@ export const getResourceType = async () => {
     return await request.post<ResourceType[]>("/resource/getResourceType");
 };
 
+export const getResourceTypeByID = async (data: { resourceTypeID: string }) => {
+    return await request.post<ResourceType>(
+        "/resource/getResourceTypeByID",
+        data
+    );
+};
+
 export const createResourceType = async (data: CreateResourceType) => {
     return await request.post("/resource/createResourceType", data);
 };
