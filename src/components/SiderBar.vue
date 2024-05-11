@@ -42,7 +42,9 @@
                     <el-menu-item index="/layout/resource/list"
                         >物资表</el-menu-item
                     >
-                    <el-menu-item index="4-2">物资借还</el-menu-item>
+                    <el-menu-item index="/layout/resource/myborrow"
+                        >我的借用</el-menu-item
+                    >
                 </el-sub-menu>
 
                 <el-sub-menu index="5">
