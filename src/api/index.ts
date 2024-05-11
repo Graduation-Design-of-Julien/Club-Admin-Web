@@ -1,4 +1,3 @@
-import { Direction } from "element-plus";
 import {
     College,
     CreateCollege,
@@ -14,6 +13,7 @@ import {
 import {
     CreateDirection,
     DeleteDirection,
+    Direction,
     UpdateDirection,
 } from "../types/Direction";
 import { CreateMojar, DeleteMojar, Mojar, UpdateMojar } from "../types/Mojar";
@@ -263,7 +263,7 @@ export const getBorrow = async () => {
 };
 
 export const createBorrow = async (data: CreateBorrow) => {
-    return await request.post("/resource/createBorrow", { data });
+    return await request.post("/resource/createBorrow", data);
 };
 
 export const updateBorrow = async (data: UpdateBorrow) => {
