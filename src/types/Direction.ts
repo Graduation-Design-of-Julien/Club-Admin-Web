@@ -2,8 +2,8 @@ export interface Direction {
     directionCode: string;
     directionName: string;
     departmentCode: number;
-    createTime: Date;
-    changeTime: Date;
+    createTime: string;
+    changeTime: string;
     deleted: number;
 }
 

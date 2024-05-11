@@ -2,7 +2,7 @@ export interface Role {
     roleCode: string;
     roleName: string;
     roleLevel: number;
-    createTime: Date;
-    changeTime: Date;
+    createTime: string;
+    changeTime: string;
     deleted: number;
 }

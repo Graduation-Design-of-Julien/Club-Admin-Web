@@ -1,8 +1,8 @@
 export interface ResourceType {
     resourceTypeID: string;
     resourceTypeName: string;
-    createTime: Date;
-    changeTime: Date;
+    createTime: string;
+    changeTime: string;
     deleted: number;
 }
 
@@ -24,8 +24,8 @@ export interface Resource {
     resourceTypeID: string;
     resourceName: string;
     status: number;
-    createTime: Date;
-    changeTime: Date;
+    createTime: string;
+    changeTime: string;
     deleted: number;
 }
 
@@ -49,26 +49,26 @@ export interface ResourceBorrow {
     borrowedID: string;
     uid: string;
     resourceID: string;
-    borrowTime: Date;
-    returnTime: Date;
-    realReturnTime: Date;
+    borrowTime: string;
+    returnTime: string;
+    realReturnTime: string;
     isReturn: boolean;
-    createTime: Date;
-    changeTime: Date;
+    createTime: string;
+    changeTime: string;
     deleted: number;
 }
 
 export interface CreateBorrow {
     resourceID: string;
-    returnTime: Date;
+    returnTime: string;
 }
 
 export interface UpdateBorrow {
     borrowedID: string;
     resourceID: string;
-    borrowTime: Date;
-    returnTime: Date;
-    realReturnTime: Date;
+    borrowTime: string;
+    returnTime: string;
+    realReturnTime: string;
     isReturn: boolean;
 }
 

@@ -5,8 +5,8 @@ export interface Outbox {
     sender: string;
     status: number;
     recipients: string;
-    createTime: Date;
-    updateTime: Date;
+    createTime: string;
+    updateTime: string;
     deleted: number;
 }
 
@@ -43,8 +43,8 @@ export interface Inbox {
     notificationID: string;
     recipientID: string;
     status: number;
-    createTime: Date;
-    updateTime: Date;
+    createTime: string;
+    updateTime: string;
     deleted: number;
 }
 

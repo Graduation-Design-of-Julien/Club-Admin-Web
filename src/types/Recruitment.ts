@@ -1,21 +1,21 @@
 export interface Recruitment {
     recruitmentID: string;
     recruitmentName: string;
-    recruitmentTime: Date;
+    recruitmentTime: string;
     recruitmentDepaList: string;
     recruitmentDirecList: string;
     recruitmentRoleList: string;
     collegeCodeList: string;
     mojarCodeList: string;
     status: number;
-    createTime: Date;
-    changeTime: Date;
+    createTime: string;
+    changeTime: string;
     deleted: number;
 }
 
 export interface CreateRecruitment {
     recruitmentName: string;
-    recruitmentTime: Date;
+    recruitmentTime: string;
     recruitmentDepaList: string;
     recruitmentDirecList: string;
     recruitmentRoleList: string;
@@ -26,7 +26,7 @@ export interface CreateRecruitment {
 export interface UpdateRecruitment {
     recruitmentID: string;
     recruitmentName: string;
-    recruitmentTime: Date;
+    recruitmentTime: string;
     recruitmentDepaList: string;
     recruitmentDirecList: string;
     recruitmentRoleList: string;
@@ -54,7 +54,7 @@ export interface ApplicationTable {
     introduction: string;
     obey: boolean;
     status: number;
-    createTime: Date;
+    createTime: string;
     deleted: number;
 }
 

@@ -1,8 +1,8 @@
 export interface Department {
     departmentCode: string;
     departmentName: string;
-    createTime: Date;
-    changeTime: Date;
+    createTime: string;
+    changeTime: string;
     deleted: number;
 }
 

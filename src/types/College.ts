@@ -1,8 +1,8 @@
 export interface College {
     collegeCode: string;
     collegeName: string;
-    createTime: Date;
-    changeTime: Date;
+    createTime: string;
+    changeTime: string;
     deleted: number;
 }
 

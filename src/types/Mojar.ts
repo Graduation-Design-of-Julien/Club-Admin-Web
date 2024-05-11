@@ -2,8 +2,8 @@ export interface Mojar {
     mojarCode: string;
     mojarName: string;
     college: string;
-    createTime: Date;
-    changeTime: Date;
+    createTime: string;
+    changeTime: string;
     deleted: number;
 }
 
