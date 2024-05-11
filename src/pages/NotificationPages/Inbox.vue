@@ -78,6 +78,7 @@ interface Table {
 const table = ref<Table[]>([]);
 
 const getTable = () => {
+    table.value = [];
     myInbox.value.forEach((item) => {
         getNotificationByID({ notificationID: item.notificationID }).then(
             (res) => {
@@ -143,6 +144,7 @@ const deleteNotification = (data: Table) => {
                         type: "success",
                         message: "删除成功",
                     });
+                    getAllMyInbox();
                 } else {
                     ElMessage({
                         type: "error",
@@ -165,8 +167,7 @@ const handleOpen = (row: Table) => {
 };
 const handleClose = () => {
     centerDialogVisible.value = false;
-    if (dialogData.value.status !== 1) {
-        dialogData.value.status = 2;
+    if (dialogData.value.status !== 2) {
         updateInbox({
             notificationID: dialogData.value.notificationID,
             status: 2,

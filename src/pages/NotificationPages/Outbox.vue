@@ -47,7 +47,61 @@
         destroy-on-close
         center
     >
-        <MessageForm :messageData="createForm" type="create"></MessageForm>
+        <el-form
+            ref="createFormRef"
+            style="min-width: 200px"
+            :model="createOutboxForm"
+            :rules="createRules"
+            label-width="auto"
+            status-icon
+        >
+            <el-form-item label="通知标题" prop="title">
+                <el-input v-model="createOutboxForm.title" />
+            </el-form-item>
+
+            <el-form-item label="通知正文" prop="content">
+                <el-input
+                    v-model="createOutboxForm.content"
+                    :rows="5"
+                    type="textarea"
+                />
+            </el-form-item>
+
+            <el-form-item label="抄送人" prop="recipients">
+                <el-select
+                    v-model="createOutboxForm.recipients"
+                    multiple
+                    collapse-tags
+                    collapse-tags-tooltip
+                    :max-collapse-tags="3"
+                    placeholder="请选择抄送对象"
+                >
+                    <el-option
+                        v-for="item in recipientsOpitons"
+                        :key="item.value"
+                        :label="item.label"
+                        :value="item.value"
+                    />
+                </el-select>
+            </el-form-item>
+
+            <div style="display: flex; justify-content: end">
+                <el-form-item>
+                    <el-button @click="resetForm(createFormRef)"
+                        >重置表单</el-button
+                    >
+                    <el-button @click="createSumit(createFormRef, true)"
+                        >存为草稿</el-button
+                    >
+                    <el-button
+                        type="primary"
+                        @click="createSumit(createFormRef)"
+                    >
+                        发送通知
+                    </el-button>
+                </el-form-item>
+            </div>
+        </el-form>
 
         <template #footer>
             <div class="dialog-footer">
@@ -66,7 +120,55 @@
         destroy-on-close
         center
     >
-        <MessageForm :messageData="editForm" type="update"></MessageForm>
+        <el-form
+            ref="editFormRef"
+            style="min-width: 200px"
+            :model="editForm"
+            :rules="editRules"
+            label-width="auto"
+            status-icon
+        >
+            <el-form-item label="通知标题" prop="title">
+                <el-input v-model="editForm.title" />
+            </el-form-item>
+
+            <el-form-item label="通知正文" prop="content">
+                <el-input
+                    v-model="editForm.content"
+                    :rows="5"
+                    type="textarea"
+                />
+            </el-form-item>
+
+            <el-form-item label="抄送人" prop="recipients">
+                <el-select
+                    v-model="editForm.recipients"
+                    multiple
+                    collapse-tags
+                    collapse-tags-tooltip
+                    :max-collapse-tags="3"
+                    placeholder="请选择抄送对象"
+                >
+                    <el-option
+                        v-for="item in recipientsOpitons"
+                        :key="item.value"
+                        :label="item.label"
+                        :value="item.value"
+                    />
+                </el-select>
+            </el-form-item>
+
+            <div style="display: flex; justify-content: end">
+                <el-form-item>
+                    <el-button @click="resetForm(editFormRef)"
+                        >重置表单</el-button
+                    >
+                    <el-button type="primary" @click="updateSumit(editFormRef)">
+                        发送通知
+                    </el-button>
+                </el-form-item>
+            </div>
+        </el-form>
 
         <template #footer>
             <div class="dialog-footer">
@@ -80,15 +182,21 @@
 </template>
 
 <script lang="ts" setup>
-import { ref } from "vue";
+import { reactive, ref } from "vue";
 import {
     CreateOutbox,
     Notification,
     Outbox,
     UpdateOutbox,
 } from "../../types/Notification";
-import MessageForm from "../../components/MessageForm.vue";
-import { deleteOutbox, getMyOutbox } from "../../api";
+import {
+    createOutbox,
+    deleteOutbox,
+    getAllUser,
+    getMyOutbox,
+    updateOutbox,
+} from "../../api";
+import { FormInstance, FormRules } from "element-plus";
 
 const tableData = ref<Array<Outbox>>();
 
@@ -125,19 +233,100 @@ const editForm = ref<UpdateOutbox>({
     notificationID: "",
     title: "测试标题1",
     content: "测试内容1",
-    status: 0,
+    status: 1,
     recipients: "",
 });
+const editFormRef = ref<FormInstance>();
 const updateDialogVisible = ref(false);
+// 表单校验规则
+const createRules = reactive<FormRules<CreateOutbox>>({
+    title: [
+        {
+            required: true,
+            message: "请输入通知标题。",
+            trigger: "blur",
+        },
+    ],
+    content: [
+        {
+            required: true,
+            message: "请输入通知内容。",
+            trigger: "blur",
+        },
+    ],
+    recipients: [
+        {
+            required: true,
+            message: "清选择抄送人。",
+            trigger: "blur",
+        },
+    ],
+});
+
+const editRules = reactive<FormRules<UpdateOutbox>>({
+    title: [
+        {
+            required: true,
+            message: "请输入通知标题。",
+            trigger: "blur",
+        },
+    ],
+    content: [
+        {
+            required: true,
+            message: "请输入通知内容。",
+            trigger: "blur",
+        },
+    ],
+    recipients: [
+        {
+            required: true,
+            message: "清选择抄送人。",
+            trigger: "blur",
+        },
+    ],
+});
 
 // 发布
-const createForm = ref<CreateOutbox>({
+const createOutboxForm = ref<CreateOutbox>({
     title: "",
     content: "",
-    status: 0,
+    status: 1,
     recipients: "",
 });
+const createFormRef = ref<FormInstance>();
 const createDialogVisible = ref(false);
+
+const createSumit = async (
+    formEl: FormInstance | undefined,
+    temp: boolean = false
+) => {
+    if (!formEl) return;
+    await formEl.validate((valid, fields) => {
+        if (valid) {
+            if (temp) {
+                createOutboxForm.value.status = 0;
+            }
+            createOutbox(createOutboxForm.value).then((res) => {
+                if (res.success) {
+                    ElMessage({
+                        type: "success",
+                        message: "创建成功。",
+                    });
+                    createDialogVisible.value = false;
+                    getOutboxList();
+                } else {
+                    ElMessage({
+                        type: "error",
+                        message: res.message,
+                    });
+                }
+            });
+        } else {
+            console.log("error submit!", fields);
+        }
+    });
+};
 
 // 删除
 const deleteNotification = (data: Notification) => {
@@ -176,7 +365,7 @@ const deleteNotification = (data: Notification) => {
         });
 };
 const handleCreate = () => {
-    createForm.value = {
+    createOutboxForm.value = {
         title: "",
         content: "",
         status: 0,
@@ -184,11 +373,60 @@ const handleCreate = () => {
     };
     createDialogVisible.value = true;
 };
-const handleEdit = (row: Notification) => {
+const handleEdit = (row: UpdateOutbox) => {
     updateDialogVisible.value = true;
     editForm.value = row;
 };
 const handleDelete = (row: Notification) => {
     deleteNotification(row);
+};
+
+const recipientsOpitons = ref<{ value: string; label: string }[]>([]);
+
+const getAllUserInfo = () => {
+    getAllUser().then((res) => {
+        console.log(res.data);
+        res.data?.forEach((item) => {
+            const obj = {
+                value: item.uid,
+                label: item.userName,
+            };
+            recipientsOpitons.value.push(obj);
+        });
+        console.log(recipientsOpitons.value);
+    });
+};
+getAllUserInfo();
+
+const updateSumit = async (formEl: FormInstance | undefined) => {
+    if (!formEl) return;
+    await formEl.validate((valid, fields) => {
+        if (valid) {
+            editForm.value.status = 1;
+            updateOutbox(editForm.value).then((res) => {
+                if (res.success) {
+                    ElMessage({
+                        type: "success",
+                        message: "修改成功。",
+                    });
+                    updateDialogVisible.value = false;
+                    getOutboxList();
+                } else {
+                    ElMessage({
+                        type: "error",
+                        message: res.message,
+                    });
+                }
+            });
+        } else {
+            console.log("error submit!", fields);
+        }
+    });
+};
+
+// 重置表单
+const resetForm = (formEl: FormInstance | undefined) => {
+    if (!formEl) return;
+    formEl.resetFields();
 };
 </script>
