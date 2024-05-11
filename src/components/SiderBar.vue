@@ -55,7 +55,7 @@
                     <el-menu-item index="/layout/recruitment/list"
                         >纳新列表</el-menu-item
                     >
-                    <el-menu-item index="5-2">报名列表</el-menu-item>
+                    <el-menu-item index="/layout/recruitment/application">报名列表</el-menu-item>
                 </el-sub-menu>
 
                 <el-menu-item index="6">
