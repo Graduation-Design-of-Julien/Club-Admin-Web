@@ -13,6 +13,7 @@ import { useLocalStorage } from "../utils/useLocalStorage";
 import NxForm from "../pages/RecruitmentPages/NxForm.vue";
 import ResourceTypePage from "../pages/ResourcePages/ResourceTypePage.vue";
 import ResourceBorrowPage from "../pages/ResourcePages/ResourceBorrowPage.vue";
+import ApplicationListPahe from "../pages/RecruitmentPages/ApplicationListPahe.vue";
 
 const routes: Array<RouteRecordRaw> = [
     {
@@ -92,6 +93,11 @@ const routes: Array<RouteRecordRaw> = [
                         path: "/layout/recruitment/list",
                         meta: { title: "纳新管理" },
                         component: RecruitmentListPage,
+                    },
+                    {
+                        path: "/layout/recruitment/application",
+                        meta: { title: "纳新管理" },
+                        component: ApplicationListPahe,
                     },
                 ],
             },
