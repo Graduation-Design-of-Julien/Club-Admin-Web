@@ -18,7 +18,7 @@
                     >查看</el-button
                 >
                 <el-button size="small" @click="handleEdit(scope.row)">{{
-                    scope.row.status === "已读" ? "标为未读" : "标为已读"
+                    scope.row.status === "2" ? "标为未读" : "标为已读"
                 }}</el-button>
                 <el-button
                     size="small"
