@@ -68,7 +68,7 @@ const logOut = () => {
         });
 };
 
-const handleExit = (row: any) => {
+const handleExit = () => {
     logOut();
 };
 </script>
