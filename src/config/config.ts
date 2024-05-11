@@ -49,3 +49,5 @@ export const SYS_NAME = "京涛海纳工作室";
  * 社团Logo Url
  */
 export const SYS_LOGO_URL = "https://ucs.zjlblog.site/assets/logo-69c25431.png";
+
+export const DEFAULT_AVATAR_URL = "https://zjlblog.site/avatar.jpg";
