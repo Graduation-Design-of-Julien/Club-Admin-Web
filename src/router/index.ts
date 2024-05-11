@@ -4,7 +4,6 @@ import ResetPwd from "../pages/ResetPwd.vue";
 import LoginPage from "../pages/LoginPage.vue";
 import LayoutPage from "../pages/layout/index.vue";
 import Home from "../pages/Home.vue";
-import SendMessage from "../pages/NotificationPages/SendMessage.vue";
 import Outbox from "../pages/NotificationPages/Outbox.vue";
 import Inbox from "../pages/NotificationPages/Inbox.vue";
 import ResourcePage from "../pages/ResourcePages/ResourcePage.vue";
@@ -13,6 +12,7 @@ import RecruitmentListPage from "../pages/RecruitmentPages/RecruitmentListPage.v
 import { useLocalStorage } from "../utils/useLocalStorage";
 import NxForm from "../pages/RecruitmentPages/NxForm.vue";
 import ResourceTypePage from "../pages/ResourcePages/ResourceTypePage.vue";
+import ResourceBorrowPage from "../pages/ResourcePages/ResourceBorrowPage.vue";
 
 const routes: Array<RouteRecordRaw> = [
     {
@@ -43,11 +43,6 @@ const routes: Array<RouteRecordRaw> = [
                 path: "/layout/notification",
                 children: [
                     {
-                        path: "/layout/notification/sendmessage",
-                        meta: { title: "发送通知" },
-                        component: SendMessage,
-                    },
-                    {
                         path: "/layout/notification/outbox",
                         meta: { title: "发件箱" },
                         component: Outbox,
@@ -72,6 +67,11 @@ const routes: Array<RouteRecordRaw> = [
                         path: "/layout/resource/list",
                         meta: { title: "物资管理" },
                         component: ResourcePage,
+                    },
+                    {
+                        path: "/layout/resource/myborrow",
+                        meta: { title: "我的借用" },
+                        component: ResourceBorrowPage,
                     },
                 ],
             },
