@@ -7,20 +7,35 @@ import Home from "../pages/Home.vue";
 import SendMessage from "../pages/NotificationPages/SendMessage.vue";
 import Outbox from "../pages/NotificationPages/Outbox.vue";
 import Inbox from "../pages/NotificationPages/Inbox.vue";
-import ResourcePage from "../pages/ResourcePages/index.vue"
+import ResourcePage from "../pages/ResourcePages/index.vue";
 import MembersInfoPage from "../pages/MembersPages/MembersInfoPage.vue";
 import RecruitmentListPage from "../pages/RecruitmentPages/RecruitmentListPage.vue";
-
+import { useLocalStorage } from "../utils/useLocalStorage";
+import NxForm from "../pages/RecruitmentPages/NxForm.vue";
 
 const routes: Array<RouteRecordRaw> = [
-    { path: "/login", component: LoginPage },
-    { path: "/reset", component: ResetPwd },
+    {
+        path: "/login",
+        meta: { title: "登录" },
+        component: LoginPage,
+    },
+    {
+        path: "/reset",
+        meta: { title: "找回密码" },
+        component: ResetPwd,
+    },
+    {
+        path: "/nxForm",
+        meta: { title: "纳新报名" },
+        component: NxForm,
+    },
     {
         path: "/layout",
         component: LayoutPage,
         children: [
             {
                 path: "/layout/home",
+                meta: { title: "主页" },
                 component: Home,
             },
             {
@@ -28,48 +43,96 @@ const routes: Array<RouteRecordRaw> = [
                 children: [
                     {
                         path: "/layout/notification/sendmessage",
+                        meta: { title: "发送通知" },
                         component: SendMessage,
                     },
                     {
                         path: "/layout/notification/outbox",
+                        meta: { title: "发件箱" },
                         component: Outbox,
                     },
                     {
                         path: "/layout/notification/inbox",
+                        meta: { title: "收件箱" },
                         component: Inbox,
                     },
                 ],
             },
             {
                 path: "/layout/resource",
-                component: ResourcePage
+                meta: { title: "物资管理" },
+                component: ResourcePage,
             },
             {
                 path: "/layout/member",
                 children: [
                     {
                         path: "/layout/member/info",
-                        component: MembersInfoPage
-                    }
-                ]
+                        meta: { title: "人员管理" },
+                        component: MembersInfoPage,
+                    },
+                ],
             },
             {
                 path: "/layout/recruitment",
                 children: [
                     {
                         path: "/layout/recruitment/list",
-                        component: RecruitmentListPage
-                    }
-                ]
-            }
+                        meta: { title: "纳新管理" },
+                        component: RecruitmentListPage,
+                    },
+                ],
+            },
         ],
     },
-    // { path: '/about', component: About },
 ];
 
 const router = createRouter({
     history: createWebHashHistory(),
     routes,
+});
+
+const storageHelper = useLocalStorage();
+
+// 重定向到登录
+export const redirectToLogin = async () => {
+    storageHelper.removeLocalStorage("token");
+    await router.replace("/login");
+};
+
+const BASE_TITLE = "社团管理系统";
+router.beforeEach(async (to, from, next) => {
+    const token = storageHelper.getLocalStorage("token");
+    if (to.path == "/login" || to.path == "/reset" || to.path == "nxForm") {
+        next();
+    } else {
+        if (!token) {
+            if (to.path == "/") {
+                router.replace("/login");
+            } else {
+                ElMessage({
+                    type: "error",
+                    message: "未登录，请登录后再试。",
+                });
+                router.replace("/login");
+            }
+        } else {
+            if (to.path == "/") {
+                router.replace("/layout/home");
+            } else {
+                next();
+            }
+        }
+    }
+});
+
+router.afterEach((to, from) => {
+    if (to.meta.title) {
+        // 设置标题
+        document.title = `${to.meta.title} · ${BASE_TITLE}`;
+    } else {
+        document.title = BASE_TITLE;
+    }
 });
 
 export default router;
