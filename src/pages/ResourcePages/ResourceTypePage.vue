@@ -7,8 +7,12 @@
                     <el-input
                         style="width: 200px"
                         placeholder="请输入物资类型名称"
+                        v-model="searchInput"
                     ></el-input>
-                    <el-button type="primary">搜索</el-button>
+                    <el-button type="primary" @click="search">搜索</el-button>
+                    <el-button type="primary" @click="resetSearch"
+                        >重置</el-button
+                    >
                 </div>
                 <div
                     style="
@@ -287,5 +291,20 @@ const submitUpdateForm = async (formEl: FormInstance | undefined) => {
             console.log("error submit!", fields);
         }
     });
+};
+
+const searchInput = ref("");
+
+const search = () => {
+    const searchResult = tableData.value?.find(
+        (value) => value.resourceTypeName == searchInput.value
+    );
+    tableData.value = [];
+    tableData.value.push(searchResult!);
+};
+
+const resetSearch = () => {
+    getResType();
+    searchInput.value = "";
 };
 </script>
