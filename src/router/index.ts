@@ -45,7 +45,7 @@ const routes: Array<RouteRecordRaw> = [
                 children: [
                     {
                         path: "/layout/notification/outbox",
-                        meta: { title: "发件箱" },
+                        meta: { title: "发件箱", role: 2 },
                         component: Outbox,
                     },
                     {
@@ -61,12 +61,12 @@ const routes: Array<RouteRecordRaw> = [
                 children: [
                     {
                         path: "/layout/resource/type",
-                        meta: { title: "物资类型" },
+                        meta: { title: "物资类型", role: 2 },
                         component: ResourceTypePage,
                     },
                     {
                         path: "/layout/resource/list",
-                        meta: { title: "物资管理" },
+                        meta: { title: "物资管理", role: 2 },
                         component: ResourcePage,
                     },
                     {
@@ -81,7 +81,7 @@ const routes: Array<RouteRecordRaw> = [
                 children: [
                     {
                         path: "/layout/member/info",
-                        meta: { title: "人员管理" },
+                        meta: { title: "人员管理", role: 2 },
                         component: MembersInfoPage,
                     },
                 ],
@@ -91,12 +91,12 @@ const routes: Array<RouteRecordRaw> = [
                 children: [
                     {
                         path: "/layout/recruitment/list",
-                        meta: { title: "纳新管理" },
+                        meta: { title: "纳新管理", role: 2 },
                         component: RecruitmentListPage,
                     },
                     {
                         path: "/layout/recruitment/application",
-                        meta: { title: "纳新管理" },
+                        meta: { title: "纳新管理", role: 2 },
                         component: ApplicationListPahe,
                     },
                 ],
