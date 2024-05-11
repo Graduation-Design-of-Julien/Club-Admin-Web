@@ -1,17 +1,30 @@
 <template>
     <h2>发件箱</h2>
     <div style="display: flex; flex-direction: row">
-        <el-input style="width: 200px" placeholder="请输入通知标题"></el-input>
-        <el-button type="primary">搜索</el-button>
+        <el-input
+            style="width: 200px"
+            placeholder="请输入通知标题"
+            v-model="searchInput"
+        ></el-input>
+        <el-button type="primary" @click="search">搜索</el-button>
+        <el-button type="primary" @click="resetSearch">重置</el-button>
     </div>
     <div style="display: flex; flex-direction: row; margin: 10px 0 10px 0">
-        <el-button type="primary">发布通知</el-button>
+        <el-button type="primary" @click="handleCreate">发布通知</el-button>
     </div>
     <el-table :data="tableData" stripe style="width: 100%">
-        <el-table-column prop="createTime" label="发件时间" width="180" />
-        <el-table-column prop="changeTime" label="修改时间" width="180" />
+        <el-table-column prop="createTime" label="发件时间" width="200" />
+        <el-table-column prop="updateTime" label="修改时间" width="200" />
         <el-table-column prop="title" label="标题" width="180" />
         <el-table-column prop="content" label="通知内容" />
+        <el-table-column label="状态" width="100">
+            <template #default="scope">
+                <el-tag :type="scope.row.status == '0' ? 'info' : 'success'">{{
+                    scope.row.status == "0" ? "草稿" : "已发送"
+                }}</el-tag>
+            </template>
+        </el-table-column>
+
         <el-table-column label="操作" width="180">
             <template #default="scope">
                 <el-button size="small" @click="handleEdit(scope.row)"
@@ -28,18 +41,37 @@
     </el-table>
 
     <el-dialog
-        v-model="centerDialogVisible"
+        v-model="createDialogVisible"
+        title="发布通知"
+        width="500"
+        destroy-on-close
+        center
+    >
+        <MessageForm :messageData="createForm" type="create"></MessageForm>
+
+        <template #footer>
+            <div class="dialog-footer">
+                <el-button @click="createDialogVisible = false">取消</el-button>
+                <el-button type="primary" @click="createDialogVisible = false">
+                    确认
+                </el-button>
+            </div>
+        </template>
+    </el-dialog>
+
+    <el-dialog
+        v-model="updateDialogVisible"
         title="修改通知"
         width="500"
         destroy-on-close
         center
     >
-        <MessageForm :messageData="editForm"></MessageForm>
+        <MessageForm :messageData="editForm" type="update"></MessageForm>
 
         <template #footer>
             <div class="dialog-footer">
-                <el-button @click="centerDialogVisible = false">取消</el-button>
-                <el-button type="primary" @click="centerDialogVisible = false">
+                <el-button @click="updateDialogVisible = false">取消</el-button>
+                <el-button type="primary" @click="updateDialogVisible = false">
                     确认
                 </el-button>
             </div>
@@ -49,54 +81,63 @@
 
 <script lang="ts" setup>
 import { ref } from "vue";
-import { Notification } from "../../types/Notification";
+import {
+    CreateOutbox,
+    Notification,
+    Outbox,
+    UpdateOutbox,
+} from "../../types/Notification";
 import MessageForm from "../../components/MessageForm.vue";
+import { deleteOutbox, getMyOutbox } from "../../api";
 
-const tableData: Array<Notification> = [
-    {
-        notificationID: "",
-        title: "测试标题1",
-        content: "测试内容1",
-        sender: "",
-        createTime: "2024-04-10 23:32:59",
-        status: "已发送",
-        changeTime: "2024-04-10 23:32:59",
-        recipients: [],
-    },
-    {
-        notificationID: "",
-        title: "测试标题2",
-        content: "测试内容2",
-        sender: "",
-        createTime: "2024-04-10 23:35:36",
-        status: "已发送",
-        changeTime: "2024-04-10 23:35:36",
-        recipients: [],
-    },
-    {
-        notificationID: "",
-        title: "测试标题3",
-        content: "测试内容3",
-        sender: "",
-        createTime: "2024-04-10 23:41:13",
-        status: "已发送",
-        changeTime: "2024-04-10 23:41:13",
-        recipients: [],
-    },
-];
+const tableData = ref<Array<Outbox>>();
+
+const getOutboxList = () => {
+    getMyOutbox()
+        .then((res) => {
+            tableData.value = res.data;
+        })
+        .catch(() => {
+            ElMessage({
+                type: "error",
+                message: "获取发件箱失败。",
+            });
+        });
+};
+getOutboxList();
+
+const searchInput = ref("");
+
+const search = () => {
+    const searchResult = tableData.value?.find(
+        (value) => value.title == searchInput.value
+    );
+    tableData.value = [];
+    tableData.value.push(searchResult!);
+};
+
+const resetSearch = () => {
+    getOutboxList(), (searchInput.value = "");
+};
 
 // 修改
-const editForm = ref<Notification>({
+const editForm = ref<UpdateOutbox>({
     notificationID: "",
     title: "测试标题1",
     content: "测试内容1",
-    sender: "",
-    createTime: new Date().toTimeString(),
-    status: "已发送",
-    changeTime: new Date().toTimeString(),
-    recipients: [],
+    status: 0,
+    recipients: "",
 });
-const centerDialogVisible = ref(false);
+const updateDialogVisible = ref(false);
+
+// 发布
+const createForm = ref<CreateOutbox>({
+    title: "",
+    content: "",
+    status: 0,
+    recipients: "",
+});
+const createDialogVisible = ref(false);
 
 // 删除
 const deleteNotification = (data: Notification) => {
@@ -110,12 +151,22 @@ const deleteNotification = (data: Notification) => {
         }
     )
         .then(() => {
-            // TODO: 完成删除
-            console.log(data);
-            ElMessage({
-                type: "success",
-                message: "删除成功",
-            });
+            deleteOutbox({ notificationID: data.notificationID }).then(
+                (res) => {
+                    if (res.success) {
+                        ElMessage({
+                            type: "success",
+                            message: "删除成功",
+                        });
+                        getOutboxList();
+                    } else {
+                        ElMessage({
+                            type: "error",
+                            message: res.message,
+                        });
+                    }
+                }
+            );
         })
         .catch(() => {
             ElMessage({
@@ -124,9 +175,17 @@ const deleteNotification = (data: Notification) => {
             });
         });
 };
-
+const handleCreate = () => {
+    createForm.value = {
+        title: "",
+        content: "",
+        status: 0,
+        recipients: "",
+    };
+    createDialogVisible.value = true;
+};
 const handleEdit = (row: Notification) => {
-    centerDialogVisible.value = true;
+    updateDialogVisible.value = true;
     editForm.value = row;
 };
 const handleDelete = (row: Notification) => {

@@ -20,21 +20,32 @@
         </el-form-item>
 
         <el-form-item label="抄送人" prop="recipients">
-            <el-cascader
+            <el-select
                 v-model="NotificationForm.recipients"
-                :options="recipientsOpitons"
-                :props="recipientsProps"
+                multiple
                 collapse-tags
                 collapse-tags-tooltip
-                clearable
+                :max-collapse-tags="3"
                 placeholder="请选择抄送对象"
-            />
+            >
+                <el-option
+                    v-for="item in recipientsOpitons"
+                    :key="item.value"
+                    :label="item.label"
+                    :value="item.value"
+                />
+            </el-select>
         </el-form-item>
 
         <div style="display: flex; justify-content: end">
             <el-form-item>
                 <el-button @click="resetForm(NotificationFormRef)"
                     >重置表单</el-button
+                >
+                <el-button
+                    v-show="$props.type == 'create'"
+                    @click="submitForm(NotificationFormRef, true)"
+                    >存为草稿</el-button
                 >
                 <el-button
                     type="primary"
@@ -50,101 +61,38 @@
 <script lang="ts" setup>
 import { reactive, ref } from "vue";
 import type { FormInstance, FormRules } from "element-plus";
-import { Notification } from "../types/Notification";
+import {
+    CreateOutbox,
+    Notification,
+    UpdateOutbox,
+} from "../types/Notification";
+import { createOutbox, getAllUser, updateOutbox } from "../api";
 
 const props = defineProps<{
-    messageData: Notification,
-}>()
+    messageData: UpdateOutbox | CreateOutbox;
+    type: "update" | "create";
+}>();
 
 const NotificationFormRef = ref<FormInstance>();
-const NotificationForm = props.messageData!
-
-const recipientsProps = { multiple: true };
+const NotificationForm = props.messageData;
 
 // TODO: 从服务器获取用户列表
-const recipientsOpitons = [
-    {
-        value: 1,
-        label: "Asia",
-        children: [
-            {
-                value: 2,
-                label: "China",
-                children: [
-                    { value: 3, label: "Beijing" },
-                    { value: 4, label: "Shanghai" },
-                    { value: 5, label: "Hangzhou" },
-                ],
-            },
-            {
-                value: 6,
-                label: "Japan",
-                children: [
-                    { value: 7, label: "Tokyo" },
-                    { value: 8, label: "Osaka" },
-                    { value: 9, label: "Kyoto" },
-                ],
-            },
-            {
-                value: 10,
-                label: "Korea",
-                children: [
-                    { value: 11, label: "Seoul" },
-                    { value: 12, label: "Busan" },
-                    { value: 13, label: "Taegu" },
-                ],
-            },
-        ],
-    },
-    {
-        value: 14,
-        label: "Europe",
-        children: [
-            {
-                value: 15,
-                label: "France",
-                children: [
-                    { value: 16, label: "Paris" },
-                    { value: 17, label: "Marseille" },
-                    { value: 18, label: "Lyon" },
-                ],
-            },
-            {
-                value: 19,
-                label: "UK",
-                children: [
-                    { value: 20, label: "London" },
-                    { value: 21, label: "Birmingham" },
-                    { value: 22, label: "Manchester" },
-                ],
-            },
-        ],
-    },
-    {
-        value: 23,
-        label: "North America",
-        children: [
-            {
-                value: 24,
-                label: "US",
-                children: [
-                    { value: 25, label: "New York" },
-                    { value: 26, label: "Los Angeles" },
-                    { value: 27, label: "Washington" },
-                ],
-            },
-            {
-                value: 28,
-                label: "Canada",
-                children: [
-                    { value: 29, label: "Toronto" },
-                    { value: 30, label: "Montreal" },
-                    { value: 31, label: "Ottawa" },
-                ],
-            },
-        ],
-    },
-];
+const recipientsOpitons = ref<{ value: string; label: string }[]>([]);
+
+const getAllUserInfo = () => {
+    getAllUser().then((res) => {
+        console.log(res.data);
+        res.data?.forEach((item) => {
+            const obj = {
+                value: item.uid,
+                label: item.userName,
+            };
+            recipientsOpitons.value.push(obj);
+        });
+        console.log(recipientsOpitons.value);
+    });
+};
+getAllUserInfo();
 
 // 表单校验规则
 const rules = reactive<FormRules<Notification>>({
@@ -172,12 +120,49 @@ const rules = reactive<FormRules<Notification>>({
 });
 
 // 提交表单
-const submitForm = async (formEl: FormInstance | undefined) => {
+const submitForm = async (
+    formEl: FormInstance | undefined,
+    temp: boolean = false
+) => {
     if (!formEl) return;
     await formEl.validate((valid, fields) => {
         if (valid) {
             // TODO: 提交
-            console.log("submit!");
+            if (props.type === "create") {
+                if (!temp) {
+                    NotificationForm.status = 1;
+                }
+                console.log(NotificationForm);
+                createOutbox(NotificationForm as CreateOutbox).then((res) => {
+                    if (res.success) {
+                        ElMessage({
+                            type: "success",
+                            message: "创建成功。",
+                        });
+                        window.location.reload;
+                    } else {
+                        ElMessage({
+                            type: "error",
+                            message: res.message,
+                        });
+                    }
+                });
+            } else {
+                updateOutbox(NotificationForm as UpdateOutbox).then((res) => {
+                    if (res.success) {
+                        ElMessage({
+                            type: "success",
+                            message: "修改成功。",
+                        });
+                        window.location.reload;
+                    } else {
+                        ElMessage({
+                            type: "error",
+                            message: res.message,
+                        });
+                    }
+                });
+            }
         } else {
             console.log("error submit!", fields);
         }

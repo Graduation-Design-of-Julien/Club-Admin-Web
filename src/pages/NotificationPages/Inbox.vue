@@ -1,14 +1,18 @@
 <template>
     <h2>收件箱</h2>
-    <el-table :data="tableData" stripe style="width: 100%">
-        <el-table-column prop="title" label="标题" width="180" />
+    <el-table :data="table" stripe style="width: 100%">
+        <el-table-column prop="title" label="标题" />
+        <el-table-column prop="sender" label="发件人" width="180" />
         <el-table-column label="状态" width="180">
             <template #default="scope">
-                <el-tag :type="scope.row.status=='已读' ? 'primary' : 'warning'">{{ scope.row.status }}</el-tag>
+                <el-tag
+                    :type="scope.row.status == '2' ? 'primary' : 'warning'"
+                    >{{ scope.row.status == "2" ? "已读" : "未读" }}</el-tag
+                >
             </template>
         </el-table-column>
-        <el-table-column prop="changeTime" label="修改时间" width="180" />
-        <el-table-column label="操作">
+        <el-table-column prop="createTime" label="收件时间" width="200" />
+        <el-table-column label="操作" width="300">
             <template #default="scope">
                 <el-button size="small" @click="handleOpen(scope.row)"
                     >查看</el-button
@@ -47,60 +51,104 @@
 </template>
 
 <script lang="ts" setup>
-import { Outbox } from "../../types/Notification";
+import {
+    deleteInbox,
+    getAllUser,
+    getMyInbox,
+    getNotificationByID,
+    updateInbox,
+} from "../../api";
+import { Inbox } from "../../types/Notification";
 import { ref } from "vue";
 
+// 查看开关
 const centerDialogVisible = ref(false);
 
-const tableData: Array<Outbox> = [
-    {
-        notificationID: "",
-        title: "测试标题1",
-        content: "测试内容1",
-        sender: "已读",
-        status: "已读",
-        changeTime: "2024-04-10 23:32:59"
-    },
-    {
-        notificationID: "",
-        title: "测试标题2",
-        content: "测试内容2",
-        sender: "未读",
-        status: "未读",
-        changeTime: "2024-04-10 23:35:36",
-    },
-    {
-        notificationID: "",
-        title: "测试标题3",
-        content: "测试内容3",
-        sender: "",
-        status: "已读",
-        changeTime: "2024-04-10 23:41:13",
-    },
-];
+const myInbox = ref<Inbox[]>([]);
 
-const dialogData = ref<Outbox>({
+interface Table {
+    notificationID: string;
+    title: string;
+    content: string;
+    status: number;
+    sender: string;
+    createTime: string;
+}
+
+const table = ref<Table[]>([]);
+
+const getTable = () => {
+    myInbox.value.forEach((item) => {
+        getNotificationByID({ notificationID: item.notificationID }).then(
+            (res) => {
+                console.log(res.data);
+                if (res.success) {
+                    getAllUser().then((resq) => {
+                        const user = resq.data?.find(
+                            (info) => info.uid == res.data!.sender
+                        );
+                        const obj: Table = {
+                            notificationID: res.data!.notificationID,
+                            title: res.data!.title,
+                            content: res.data!.content,
+                            status: item.status,
+                            sender: user!.userName,
+                            createTime: res.data!.createTime.toString(),
+                        };
+                        table.value?.push(obj);
+                    });
+                }
+            }
+        );
+        console.log(table.value);
+    });
+};
+
+const getAllMyInbox = () => {
+    getMyInbox().then((res) => {
+        if (res.success) {
+            myInbox.value = res.data!;
+            console.log(myInbox.value);
+            getTable();
+        } else {
+            ElMessage({
+                type: "error",
+                message: res.message,
+            });
+        }
+    });
+};
+getAllMyInbox();
+
+const dialogData = ref<Table>({
     notificationID: "",
     title: "",
     content: "",
+    status: 0,
     sender: "",
-    status: "",
-    changeTime: "",
+    createTime: "",
 });
 
 // 删除
-const deleteNotification = (data: Outbox) => {
+const deleteNotification = (data: Table) => {
     ElMessageBox.confirm("你要删除这条通知吗？", "警告", {
         confirmButtonText: "确定",
         cancelButtonText: "取消",
         type: "warning",
     })
         .then(() => {
-            // TODO: 完成删除
-            console.log(data);
-            ElMessage({
-                type: "success",
-                message: "删除成功",
+            deleteInbox({ notificationID: data.notificationID }).then((res) => {
+                if (res.success) {
+                    ElMessage({
+                        type: "success",
+                        message: "删除成功",
+                    });
+                } else {
+                    ElMessage({
+                        type: "error",
+                        message: res.message,
+                    });
+                }
             });
         })
         .catch(() => {
@@ -111,25 +159,54 @@ const deleteNotification = (data: Outbox) => {
         });
 };
 
-const handleOpen = (row: Outbox) => {
+const handleOpen = (row: Table) => {
     centerDialogVisible.value = true;
     dialogData.value = row;
 };
 const handleClose = () => {
     centerDialogVisible.value = false;
-    if(dialogData.value.status !== "已读"){
-        dialogData.value.status = "已读"
-        // TODO: 向服务器变更数据
+    if (dialogData.value.status !== 1) {
+        dialogData.value.status = 2;
+        updateInbox({
+            notificationID: dialogData.value.notificationID,
+            status: 2,
+        }).then((res) => {
+            if (res.success) {
+                ElMessage({
+                    type: "success",
+                    message: "已读。",
+                });
+                getAllMyInbox();
+            } else {
+                ElMessage({
+                    type: "error",
+                    message: res.message,
+                });
+            }
+        });
     }
-}
-const handleEdit = (row: Outbox) => {
-    row.status === "已读" ? (row.status = "未读") : (row.status = "已读");
-    ElMessage({
-        type: "success",
-        message: `通知已标为${row.status}`,
+};
+const handleEdit = (row: Table) => {
+    row.status === 1 ? (row.status = 2) : (row.status = 1);
+    updateInbox({
+        notificationID: row.notificationID,
+        status: row.status,
+    }).then((res) => {
+        if (res.success) {
+            ElMessage({
+                type: "success",
+                message: "更新成功。",
+            });
+            getAllMyInbox();
+        } else {
+            ElMessage({
+                type: "error",
+                message: res.message,
+            });
+        }
     });
 };
-const handleDelete = (row: Outbox) => {
+const handleDelete = (row: Table) => {
     deleteNotification(row);
 };
 </script>
