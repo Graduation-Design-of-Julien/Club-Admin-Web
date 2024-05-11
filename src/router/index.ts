@@ -119,7 +119,7 @@ export const redirectToLogin = async () => {
 };
 
 const BASE_TITLE = "社团管理系统";
-router.beforeEach(async (to, from, next) => {
+router.beforeEach(async (to, _from, next) => {
     const token = storageHelper.getLocalStorage("token");
     if (to.path == "/login" || to.path == "/reset" || to.path == "nxForm") {
         next();
@@ -144,7 +144,7 @@ router.beforeEach(async (to, from, next) => {
     }
 });
 
-router.afterEach((to, from) => {
+router.afterEach((to, _from) => {
     if (to.meta.title) {
         // 设置标题
         document.title = `${to.meta.title} · ${BASE_TITLE}`;
