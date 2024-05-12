@@ -1,4 +1,4 @@
-# Clue Admin 社团管理系统
+# Club Admin 社团管理系统
 基于TypeScript语言的社团管理系统的设计与实现
 
 ## 前言
