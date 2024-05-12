@@ -108,6 +108,25 @@
                 </el-result>
             </div>
         </el-card>
+                   <div>
+        <br /><br />
+        <el-link href="https://beian.miit.gov.cn/" target="_blank"
+            >粤ICP备2022014957号-1</el-link
+        >
+        <div
+            style="display: flex; flex-direction: row; justify-content: center"
+        >
+            <el-image
+                style="width: 20px; height: 20px"
+                src="https://img.alicdn.com/tfs/TB1..50QpXXXXX7XpXXXXXXXXXX-40-40.png"
+            />
+            <el-link
+                href="http://www.beian.gov.cn/portal/registerSystemInfo?recordcode=44049102496850/"
+                target="_blank"
+                >粤公网安备 44049102496850号</el-link
+            >
+        </div>
+    </div>
     </div>
 </template>
 
@@ -451,5 +470,6 @@ const finishReset = async (formEl: FormInstance | undefined) => {
     display: flex;
     align-items: center;
     justify-content: center;
+    flex-direction: column;
 }
 </style>
