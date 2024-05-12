@@ -30,6 +30,8 @@ pnpm run dev
 
 ```
 
+在启动之前，请改动项目中`src/config/config.ts`内的一些配置，让他能正常工作。
+
 ## License
 - Apache
 
