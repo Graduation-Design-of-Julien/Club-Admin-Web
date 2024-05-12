@@ -121,7 +121,7 @@ export const redirectToLogin = async () => {
 const BASE_TITLE = "社团管理系统";
 router.beforeEach(async (to, _from, next) => {
     const token = storageHelper.getLocalStorage("token");
-    if (to.path == "/login" || to.path == "/reset" || to.path == "nxForm") {
+    if (to.path == "/login" || to.path == "/reset" || to.path == "/nxForm") {
         next();
     } else {
         if (!token) {
